@@ -1,8 +1,12 @@
 package assert
 
-import "testing"
+type TestingT interface {
+	Helper()
+	Fatalf(string, ...any)
+	Errorf(string, ...any)
+}
 
-func Assert(t *testing.T, condition bool, message string, args ...interface{}) {
+func Assert(t TestingT, condition bool, message string, args ...any) {
 	t.Helper()
 
 	if !condition {
@@ -10,7 +14,7 @@ func Assert(t *testing.T, condition bool, message string, args ...interface{}) {
 	}
 }
 
-func Equal[T comparable](t *testing.T, got T, expected T) {
+func Equal[T comparable](t TestingT, got T, expected T) {
 	t.Helper()
 
 	if got != expected {
@@ -18,7 +22,7 @@ func Equal[T comparable](t *testing.T, got T, expected T) {
 	}
 }
 
-func DereferenceEqual[T comparable](t *testing.T, got *T, expected *T) {
+func DereferenceEqual[T comparable](t TestingT, got *T, expected *T) {
 	t.Helper()
 
 	if got == nil || expected == nil {
@@ -27,7 +31,7 @@ func DereferenceEqual[T comparable](t *testing.T, got *T, expected *T) {
 	Equal(t, *got, *expected)
 }
 
-func NilErr(t *testing.T, err error) {
+func NilErr(t TestingT, err error) {
 	t.Helper()
 
 	if err != nil {
