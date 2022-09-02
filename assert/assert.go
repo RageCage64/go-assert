@@ -38,3 +38,17 @@ func NilErr(t TestingT, err error) {
 		t.Fatalf("expected no error, got error:\n%v", err)
 	}
 }
+
+func SliceEqual[T comparable](t TestingT, got []T, expected []T) {
+	t.Helper()
+
+	if len(got) != len(expected) {
+		t.Fatalf("slices were different sizes.\nexpected len:%d\ngot len:%d\n", len(expected), len(got))
+	}
+
+	for i := range got {
+		if got[i] != expected[i] {
+			t.Fatalf("slices differed at index %d.\nexpected: %v\ngot: %v", expected[i], got[i])
+		}
+	}
+}

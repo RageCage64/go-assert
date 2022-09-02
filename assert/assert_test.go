@@ -51,6 +51,40 @@ func TestAssertFail(t *testing.T) {
 	}
 }
 
-func TestEqual(t *testing.T) {
+func TestEqualFail(t *testing.T) {
+	testInstance := newTMock()
+	a := 1
+	b := 2
+	assert.Equal(testInstance, a, b)
+	if len(testInstance.logs) != 1 {
+		t.Fatalf("Found %d logs. %v", len(testInstance.logs), testInstance.logs)
+	}
+	fmt.Println(testInstance.logs[0])
+}
 
+func TestDerefenceEqualFail(t *testing.T) {
+	testInstance := newTMock()
+	type x struct {
+		num int
+	}
+	a := &x{num: 1}
+	b := &x{num: 2}
+	assert.DereferenceEqual(testInstance, a, b)
+	if len(testInstance.logs) != 1 {
+		t.Fatalf("Found %d logs. %v", len(testInstance.logs), testInstance.logs)
+	}
+	fmt.Println(testInstance.logs[0])
+}
+
+func TestDereferenceEqualPass(t *testing.T) {
+	testInstance := newTMock()
+	type x struct {
+		num int
+	}
+	a := &x{num: 1}
+	b := &x{num: 1}
+	assert.DereferenceEqual(testInstance, a, b)
+	if testInstance.failed {
+		t.Fatalf("test failed when it should have passed")
+	}
 }
