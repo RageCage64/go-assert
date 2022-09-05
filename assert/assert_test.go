@@ -76,6 +76,24 @@ func TestEqualFail(t *testing.T) {
 	}
 }
 
+func TestDereferenceEqualErr(t *testing.T) {
+	testInstance := newTMock()
+	a := &struct{}{}
+	errMsg := "nil pointer %v %v"
+	assert.DereferenceEqualMsg(testInstance, a, nil, errMsg, "does not matter")
+	if testInstance.err == nil {
+		t.Fatalf("DereferenceEqual should have failed")
+	}
+	expectedErr := fmt.Errorf(errMsg, a, nil)
+	if testInstance.err.Error() != expectedErr.Error() {
+		t.Fatalf(
+			"Errors didn't match.\nexpected: %s\ngot: %s",
+			expectedErr,
+			testInstance.err,
+		)
+	}
+}
+
 func TestDerefenceEqualFail(t *testing.T) {
 	testInstance := newTMock()
 	type x struct {
@@ -84,7 +102,7 @@ func TestDerefenceEqualFail(t *testing.T) {
 	failMsg := "%v not equal %v"
 	a := &x{num: 1}
 	b := &x{num: 2}
-	assert.DereferenceEqualMsg(testInstance, a, b, failMsg)
+	assert.DereferenceEqualMsg(testInstance, a, b, "does not matter", failMsg)
 	if len(testInstance.logs) != 1 {
 		t.Fatalf("Found %d logs. %v", len(testInstance.logs), testInstance.logs)
 	}
@@ -105,7 +123,7 @@ func TestDereferenceEqualPass(t *testing.T) {
 	}
 	a := &x{num: 1}
 	b := &x{num: 1}
-	assert.DereferenceEqualMsg(testInstance, a, b, "doesn't matter")
+	assert.DereferenceEqualMsg(testInstance, a, b, "doesn't matter", "doesn't matter")
 	if testInstance.failed {
 		t.Fatalf("test failed when it should have passed")
 	}

@@ -1,5 +1,23 @@
 package assert
 
+var (
+	// The failure format string for values not being equal. Formatted with `expected` then `got`.
+	EqualMessage = "value did not equal expectation.\nexpected: %v\n     got: %v"
+
+	// The error format string for one or both pointers being nil. Formatted with `got` then `expected`.
+	DereferenceEqualErrMsg = "go-assert: could not dereference nil pointer\ngot %v, expected %v"
+
+	// The failure format string if the err is not nil. Formatted with `err`.
+	NilErrMessage = "expected no error, got error:\n%v"
+
+	// The failure format string for slices being different sizes. Formatted with `expected` then `got`.
+	SliceSizeMessage = "slices were different sizes.\nexpected len:%d\n     got len:%d\n"
+
+	// The failure format string for slices not matching at some index. Formatted with the mismatched
+	// index, then `expected`, then `got`.
+	SliceMismatchMessage = "slices differed at index %d.\nexpected: %v\n     got: %v"
+)
+
 type TestingT interface {
 	Helper()
 	Fatal()
@@ -17,29 +35,40 @@ func Assert(t TestingT, condition bool, message string, args ...any) {
 	}
 }
 
-// Check that `got` equals `expected`.
+// Assert that `got` equals `expected`. The types between compared
+// arguments must be the same. Uses `assert.EqualMessage`.
 func Equal[T comparable](t TestingT, got T, expected T) {
-	EqualMsg(t, got, expected, "value did not equal expectation.\nexpected: %v\ngot: %v")
+	EqualMsg(t, got, expected, EqualMessage)
 }
 
+// Assert that the value at `got` equals the value at `expected`. Will
+// error if either pointer is nil. Uses `assert.DereferenceEqualErrMsg`
+// and `assert.EqualMessage`.
 func DereferenceEqual[T comparable](t TestingT, got *T, expected *T) {
-	DereferenceEqualMsg(t, got, expected, "go-assert: could not dereference nil pointer\ngot %v, expected %v")
+	DereferenceEqualMsg(t, got, expected, DereferenceEqualErrMsg, EqualMessage)
 }
 
+// Assert that that `err` is nil. Uses `assert.NilErrMessage`.
 func NilErr(t TestingT, err error) {
-	NilErrMsg(t, err, "expected no error, got error:\n%v")
+	NilErrMsg(t, err, NilErrMessage)
 }
 
+// Assert that slices `got` and `expected` are equal. Will produce a
+// different message if the lengths are different or if any element
+// mismatches. Uses `assert.SliceSizeMessage` and
+// `assert.SliceMismatchMessage`.
 func SliceEqual[T comparable](t TestingT, got []T, expected []T) {
 	SliceEqualMsg(
 		t,
 		got,
 		expected,
-		"slices were different sizes.\nexpected len:%d\ngot len:%d\n",
-		"slices differed at index %d.\nexpected: %v\ngot: %v",
+		SliceSizeMessage,
+		SliceMismatchMessage,
 	)
 }
 
+// Assert that `got` equals `expected`. The types between compared
+// arguments must be the same. Uses `message`.
 func EqualMsg[T comparable](t TestingT, got T, expected T, message string) {
 	t.Helper()
 
@@ -48,16 +77,25 @@ func EqualMsg[T comparable](t TestingT, got T, expected T, message string) {
 	}
 }
 
-func DereferenceEqualMsg[T comparable](t TestingT, got *T, expected *T, message string) {
+// Assert that the value at `got` equals the value at `expected`. Will
+// error if either pointer is nil. Uses `errMessage` and `mismatchMessage`.
+func DereferenceEqualMsg[T comparable](
+	t TestingT,
+	got *T,
+	expected *T,
+	errMessage,
+	mismatchMessage string,
+) {
 	t.Helper()
 
 	if got == nil || expected == nil {
-		t.Errorf(message, got, expected)
+		t.Errorf(errMessage, got, expected)
 	} else {
-		EqualMsg(t, *got, *expected, message)
+		EqualMsg(t, *got, *expected, mismatchMessage)
 	}
 }
 
+// Assert that that `err` is nil. Uses `message`.
 func NilErrMsg(t TestingT, err error, message string) {
 	t.Helper()
 
@@ -66,7 +104,15 @@ func NilErrMsg(t TestingT, err error, message string) {
 	}
 }
 
-func SliceEqualMsg[T comparable](t TestingT, got []T, expected []T, sizeMessage, mismatchMessage string) {
+// Assert that slices `got` and `expected` are equal. Will produce a
+// different message if the lengths are different or if any element
+// mismatches. Uses `sizeMessage` and `mismatchMessage`.
+func SliceEqualMsg[T comparable](
+	t TestingT,
+	got []T,
+	expected []T,
+	sizeMessage, mismatchMessage string,
+) {
 	t.Helper()
 
 	if len(got) != len(expected) {
