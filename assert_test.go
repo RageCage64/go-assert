@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/RageCage64/go-assert/assert"
+	"github.com/RageCage64/go-assert"
 )
 
 type tMock struct {

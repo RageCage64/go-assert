@@ -18,6 +18,8 @@ var (
 	SliceMismatchMessage = "slices differed at index %d.\nexpected: %v\n     got: %v"
 )
 
+// The interface that represents the subset of `testing.T` that this package
+// requires. Passing in a `testing.T` satisfies this interface.
 type TestingT interface {
 	Helper()
 	Fatal()
