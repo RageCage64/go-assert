@@ -21,7 +21,7 @@ func newTMock() *tMock {
 
 func (t *tMock) Helper() {}
 
-func (t *tMock) Fatal() {
+func (t *tMock) Fatal(...any) {
 	t.failed = true
 }
 

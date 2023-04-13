@@ -22,7 +22,7 @@ var (
 // requires. Passing in a `testing.T` satisfies this interface.
 type TestingT interface {
 	Helper()
-	Fatal()
+	Fatal(...any)
 	Fatalf(string, ...any)
 	Errorf(string, ...any)
 }
