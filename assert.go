@@ -39,15 +39,15 @@ func Assert(t TestingT, condition bool, message string, args ...any) {
 
 // Assert that `got` equals `expected`. The types between compared
 // arguments must be the same. Uses `assert.EqualMessage`.
-func Equal[T comparable](t TestingT, got T, expected T) {
-	EqualMsg(t, got, expected, EqualMessage)
+func Equal[T comparable](t TestingT, expected T, got T) {
+	EqualMsg(t, expected, got, EqualMessage)
 }
 
 // Assert that the value at `got` equals the value at `expected`. Will
 // error if either pointer is nil. Uses `assert.DereferenceEqualErrMsg`
 // and `assert.EqualMessage`.
-func DereferenceEqual[T comparable](t TestingT, got *T, expected *T) {
-	DereferenceEqualMsg(t, got, expected, DereferenceEqualErrMsg, EqualMessage)
+func DereferenceEqual[T comparable](t TestingT, expected *T, got *T) {
+	DereferenceEqualMsg(t, expected, got, DereferenceEqualErrMsg, EqualMessage)
 }
 
 // Assert that that `err` is nil. Uses `assert.NilErrMessage`.
@@ -59,11 +59,11 @@ func NilErr(t TestingT, err error) {
 // different message if the lengths are different or if any element
 // mismatches. Uses `assert.SliceSizeMessage` and
 // `assert.SliceMismatchMessage`.
-func SliceEqual[T comparable](t TestingT, got []T, expected []T) {
+func SliceEqual[T comparable](t TestingT, expected []T, got []T) {
 	SliceEqualMsg(
 		t,
-		got,
 		expected,
+		got,
 		SliceSizeMessage,
 		SliceMismatchMessage,
 	)
@@ -71,7 +71,7 @@ func SliceEqual[T comparable](t TestingT, got []T, expected []T) {
 
 // Assert that `got` equals `expected`. The types between compared
 // arguments must be the same. Uses `message`.
-func EqualMsg[T comparable](t TestingT, got T, expected T, message string) {
+func EqualMsg[T comparable](t TestingT, expected T, got T, message string) {
 	t.Helper()
 
 	if got != expected {
@@ -83,17 +83,17 @@ func EqualMsg[T comparable](t TestingT, got T, expected T, message string) {
 // error if either pointer is nil. Uses `errMessage` and `mismatchMessage`.
 func DereferenceEqualMsg[T comparable](
 	t TestingT,
-	got *T,
 	expected *T,
+	got *T,
 	errMessage,
 	mismatchMessage string,
 ) {
 	t.Helper()
 
 	if got == nil || expected == nil {
-		t.Errorf(errMessage, got, expected)
+		t.Errorf(errMessage, expected, got)
 	} else {
-		EqualMsg(t, *got, *expected, mismatchMessage)
+		EqualMsg(t, *expected, *got, mismatchMessage)
 	}
 }
 
@@ -111,8 +111,8 @@ func NilErrMsg(t TestingT, err error, message string) {
 // mismatches. Uses `sizeMessage` and `mismatchMessage`.
 func SliceEqualMsg[T comparable](
 	t TestingT,
-	got []T,
 	expected []T,
+	got []T,
 	sizeMessage, mismatchMessage string,
 ) {
 	t.Helper()

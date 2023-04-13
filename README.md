@@ -69,9 +69,9 @@ type x struct {
 }
 
 func TestEqual(t *testing.T) {
-    a := x{num: 1}
-    b := x{num: 2}
-    assert.Equal(t, a, b)
+    expected := x{num: 1}
+    got := x{num: 2}
+    assert.Equal(t, expected, got)
 }
 ```
 
@@ -93,9 +93,9 @@ type x struct {
 }
 
 func TestEqual(t *testing.T) {
-    a := &x{num: 1}
-    b := &x{num: 2}
-    assert.DereferenceEqual(t, a, b)
+    expected := &x{num: 1}
+    got := &x{num: 2}
+    assert.DereferenceEqual(t, expected, got)
 }
 ```
 
@@ -113,8 +113,8 @@ import (
 )
 
 func TestEqual(t *testing.T) {
-    a := []int{1, 2}
-    b := []int{1, 3}
-    assert.SliceEqual(t, a, b)
+    expected := []int{1, 2}
+    got := []int{1, 3}
+    assert.SliceEqual(t, expected, got)
 }
 ```
