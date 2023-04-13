@@ -40,6 +40,7 @@ func Assert(t TestingT, condition bool, message string, args ...any) {
 // Assert that `got` equals `expected`. The types between compared
 // arguments must be the same. Uses `assert.EqualMessage`.
 func Equal[T comparable](t TestingT, expected T, got T) {
+	t.Helper()
 	EqualMsg(t, expected, got, EqualMessage)
 }
 
@@ -47,11 +48,13 @@ func Equal[T comparable](t TestingT, expected T, got T) {
 // error if either pointer is nil. Uses `assert.DereferenceEqualErrMsg`
 // and `assert.EqualMessage`.
 func DereferenceEqual[T comparable](t TestingT, expected *T, got *T) {
+	t.Helper()
 	DereferenceEqualMsg(t, expected, got, DereferenceEqualErrMsg, EqualMessage)
 }
 
 // Assert that that `err` is nil. Uses `assert.NilErrMessage`.
 func NilErr(t TestingT, err error) {
+	t.Helper()
 	NilErrMsg(t, err, NilErrMessage)
 }
 
@@ -60,6 +63,7 @@ func NilErr(t TestingT, err error) {
 // mismatches. Uses `assert.SliceSizeMessage` and
 // `assert.SliceMismatchMessage`.
 func SliceEqual[T comparable](t TestingT, expected []T, got []T) {
+	t.Helper()
 	SliceEqualMsg(
 		t,
 		expected,
