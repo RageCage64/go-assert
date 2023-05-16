@@ -126,7 +126,7 @@ func SliceEqualMsg[T comparable](
 	} else {
 		for i := range got {
 			if got[i] != expected[i] {
-				t.Fatalf(sizeMessage, expected[i], got[i])
+				t.Fatalf(mismatchMessage, i, expected[i], got[i])
 			}
 		}
 	}
